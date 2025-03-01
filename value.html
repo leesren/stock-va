@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>股价估值计算器（最终版）</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #f8f9fa
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow-x: auto
+        }
+
+        td,
+        th {
+            border: 1px solid #e0e0e0;
+            padding: 12px;
+            text-align: left
+        }
+
+        th {
+            background-color: #f5f5f5;
+            width: 160px;
+            text-align: right
+        }
+
+        input {
+            width: calc(100% - 20px);
+            padding: 8px;
+            margin-bottom: 10px
+        }
+
+        .btn {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            cursor: pointer
+        }
+
+        .btn:hover {
+            background-color: #3498db
+        }
+
+        .red-border {
+            border: 1px solid red
+        }
+
+        .red-row {
+            background-color: #ffebee;
+        }
+
+        .warning {
+            color: red;
+            font-size: 0.9em
+        }
+
+        .active {
+            background-color: bisque;
+        }
+
+        p {
+            font-weight: normal
+        }
+
+        .item {
+            display: flex;
+            align-items: center;
+        }
+
+        .item label {
+            width: 170px
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2 style="text-align: center; color: #2c3e50">股价估值计算器</h2>
+
+    <form id="valuation-form">
+        <div class="item">
+            <label for="stock-name" style="display: block; margin-bottom: 10px">股票名称：</label>
+            <input type="text" id="stock-name" value="公牛集团" style="width: 100%">
+        </div>
+        <div class="item">
+            <label for="roe" style="display: block; margin-bottom: 10px">ROE（%）：</label>
+            <input type="number" id="roe" value="30" style="width: 100%">
+        </div>
+
+        <div class="item">
+            <label for="eps" style="display: block; margin-bottom: 10px">EPS（元）：</label>
+            <input type="number" id="eps" value="3.37" style="width: 100%">
+        </div>
+        <div class="item">
+            <label for="treasury-rate" style="display: block; margin-bottom: 10px">国债利率（%）：</label>
+            <input type="number" id="treasury-rate" value="3" placeholder="请输入" />
+        </div>
+
+        <div class="item">
+            <label for="historical-min" style="display: block; margin-bottom: 10px">历史最低价：</label>
+            <input type="number" id="historical-min" value="52" placeholder="请输入" />
+        </div>
+
+
+        <div class="item">
+            <label for="historical-max" style="display: block; margin-bottom: 10px">历史最高价：</label>
+            <input type="number" id="historical-max" value="112" placeholder="请输入" />
+        </div>
+
+        <div class="item">
+            <label for="current-pb" style="display: block; margin-bottom: 10px">当前PB：</label>
+            <input type="number" id="current-pb" value="6.53" placeholder="请输入" />
+        </div>
+
+
+        <div class="item">
+            <label for="stockValue" style="display: block; margin-bottom: 10px">当前股价：</label>
+            <input type="number" id="stockValue" value="74.98" placeholder="请输入" />
+        </div>
+
+
+        <button type="button" class="btn" onclick="calculate()">计算</button>
+    </form>
+
+    <table id="results" style="margin-top: 20px">
+        <tr>
+            <th colspan="4" style="text-align: left; background-color: #f5f5f5">计算结果（按股价区间升序排列）</th>
+        </tr>
+    </table>
+
+    <div id="analysis"
+        style="margin-top: 20px; padding: 15px; background-color: white; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1)">
+    </div>
+
+    <script>
+        // 计算函数
+        function calculate() {
+            // 获取输入并转为数值
+            const roe = parseFloat(document.getElementById('roe').value) / 100 || 0;
+            const eps = parseFloat(document.getElementById('eps').value) || 0;
+            const treasuryRate = parseFloat(document.getElementById('treasury-rate').value) / 100 || 0;
+            const historicalMin = parseFloat(document.getElementById('historical-min').value);
+            const historicalMax = parseFloat(document.getElementById('historical-max').value);
+            const currentPbInput = document.getElementById('current-pb');
+            const stockName = document.getElementById('stock-name').value
+            const stockValue = parseFloat(document.getElementById('stockValue').value || 0) || 0;
+            const currentPb = parseFloat(currentPbInput.value || 0);
+            // 验证输入有效性
+            if (roe <= 0 || eps <= 0) {
+                alert("请输入有效的ROE和EPS！");
+                return;
+            }
+
+            // 计算每股净资产（B）
+            const b = eps / roe;
+
+            // 定义三种风险类型的配置（按股价区间升序排列）
+            const riskConfigs = [
+                {
+                    name: '激进型',
+                    minPrem: 0.0,
+                    maxPrem: 0.03,
+                    factor: 6.0
+                },
+                {
+                    name: '均衡型',
+                    minPrem: 0.03,
+                    maxPrem: 0.06,
+                    factor: 4.5
+                },
+                {
+                    name: '保守型',
+                    minPrem: 0.05,
+                    maxPrem: 0.08,
+                    factor: 3.5
+                }
+            ];
+
+            // 计算所有风险类型的结果并排序
+            let results = [];
+            for (const config of riskConfigs) {
+                const minRor = treasuryRate + config.maxPrem;
+                const maxRor = treasuryRate + config.minPrem;
+                let pbMin = roe / maxRor;  // 改为 let
+                let pbMax = roe / minRor;  // 改为 let
+                let priceMin = b * pbMin;
+                let priceMax = b * pbMax;
+                if (priceMin > priceMax) {
+                    [priceMin, priceMax] = [priceMax, priceMin];
+                    [pbMin, pbMax] = [pbMax, pbMin]; // 需要同时修改pbMin/pbMax
+                }
+                results.push({
+                    type: config.name,
+                    premRange: `${config.minPrem * 100}~${config.maxPrem * 100}`,
+                    pbRange: `${pbMin.toFixed(2)}~${pbMax.toFixed(2)}`,
+                    priceRange: `${priceMin.toFixed(2)}~${priceMax.toFixed(2)}`,
+                    active: currentPb >= pbMin.toFixed(2) && currentPb < pbMax.toFixed(2),
+                });
+            }
+
+            // 按股价区间升序排列
+            results.sort((a, b) => {
+                const aMax = parseFloat(a.priceRange.split('~')[1]);
+                const bMax = parseFloat(b.priceRange.split('~')[1]);
+                return aMax - bMax;
+            });
+
+            // 清空表格并填充数据
+            document.getElementById('results').innerHTML = `
+        <tr><th>风险类型</th><th>风险溢价范围</th><th>PB区间</th><th>股价区间（元）</th></tr>
+    `;
+            results.forEach(result => {
+                document.getElementById('results').innerHTML += `
+            <tr class="${result.active ? 'active' : ''}">
+                <td>${result.type}</td>
+                <td>${result.premRange.replace('%', '')}</td>
+                <td>${result.pbRange}</td>
+                <td>${result.priceRange}</td>
+            </tr>
+        `;
+            });
+
+            // 分析历史股价区间
+            let analysisText = ['B = EPS / ROE； 股价 = B * PB；股价 = EPS / ROE * PB；'];
+            analysisText.push('PB​ = ROE / (国债利率 + 风险溢价)')
+            if (historicalMin < results[0].priceRange.split('~')[1]) {
+                analysisText.push(`历史最低价低于理论下限`);
+            } else if (historicalMin > results[0].priceRange.split('~')[1] && historicalMin < results[0].priceRange.split('~')[0]) {
+                analysisText.push(`历史最低价在理论区间内`);
+            } else {
+                analysisText.push(`历史最低价高于理论下限`);
+            }
+
+            if (historicalMax > results[0].priceRange.split('~')[0]) {
+                analysisText.push(`历史最高价高于理论上限`);
+            } else if (historicalMax > results[0].priceRange.split('~')[1] && historicalMax < results[0].priceRange.split('~')[0]) {
+                analysisText.push(`历史最高价在理论区间内`);
+            } else {
+                analysisText.push(`历史最高价低于理论上限`);
+            }
+
+            const BValue = (eps / roe).toFixed(2) * 1;
+            const currentVPb = (stockValue / BValue).toFixed(2) * 1;
+            const ror = (currentVPb / BValue).toFixed(2);
+            const addRate = (roe * 100 / currentVPb).toFixed(2);
+            const latestRate = (addRate - treasuryRate * 100).toFixed(2)
+            // 显示分析结论
+            document.getElementById('analysis').innerHTML = `
+        <div id="preview-contents" class="note-content" style="padding-left: 35px; padding-right: 35px; padding-bottom: 615px;">
+
+    <div id="wmd-preview-section-25" class="wmd-preview-section preview-content">
+
+        <h3 id="1-核心公式"><strong>1. 核心公式</strong></h3>
+
+        <p> <br>
+             <b>股价 = PB * B <b/><br><br>
+            其中： </p>
+
+        <ul>
+            <li>
+                <p><strong>PB</strong> = ROE / (国债利率 + 风险溢价) </p>
+            </li>
+            <li>
+                <p><strong>B</strong> = EPS / ROE（每股净资产）</p>
+            </li>
+        </ul>
+
+        <hr>
+
+    </div>
+    <div id="wmd-preview-section-26" class="wmd-preview-section preview-content">
+
+        <h3 ><strong>2. 代入【${stockName}】数据</strong></h3>
+
+    </div>
+     <div id="preview-contents" class="note-content" style="">
+  <div id="wmd-preview" class="preview-content"></div>
+  <div id="wmd-preview-section-24" class="wmd-preview-section preview-content">
+    <hr>
+  </div>
+  <div id="wmd-preview-section-25" class="wmd-preview-section preview-content">
+
+    <h4 id="1-计算每股净资产b"><strong>A. 计算每股净资产（B）</strong></h4>
+
+    <p><b>B = EPS / ROE </b>= ${eps} / ${roe * 100}% = ${BValue} 元</p>
+
+    <hr>
+
+  </div>
+  <div id="wmd-preview-section-26" class="wmd-preview-section preview-content">
+
+    <h4 id="2-计算当前pb"><strong>2. 计算当前PB</strong></h4>
+
+    <p><b>PB = 股价 / B </b>= ${stockValue} / ${BValue} = ${(stockValue / BValue).toFixed(2)} 倍</p>
+
+    <hr>
+
+  </div>
+  <div id="wmd-preview-section-27" class="wmd-preview-section preview-content">
+
+    <h4 id="3-计算隐含的投资回报率ror"><strong>3. 计算隐含的投资回报率（ROR）</strong></h4>
+
+    <p><b>ROR = ROE / PB </b>= ${roe * 100}% / ${currentVPb} = ${addRate}%</p>
+
+    <hr>
+
+  </div>
+  <div id="wmd-preview-section-68" class="wmd-preview-section preview-content">
+
+    <h4 id="4-计算风险溢价"><strong>4. 计算风险溢价</strong>(跟国债${treasuryRate * 100}%相比)</h4>
+
+    <p><b>风险溢价 = ROR - 国债利率 </b>= ${addRate}% - ${treasuryRate * 100}% = ${latestRate}%</p>
+  </div>
+<div id="wmd-preview-section-75" class="wmd-preview-section preview-content">
+
+<h4 id="5-结论与建议"><strong>5. 结论与建议</strong></h4>
+
+</div>
+<div id="wmd-preview-section-76" class="wmd-preview-section preview-content">
+
+<h4 id="1-当前溢价合理性"><strong>(1) 当前溢价合理性</strong></h4>
+
+<ul>
+<li><p><strong>PB=${currentPb}倍</strong> 也处于 <strong>市场历史区间（${(historicalMin / BValue).toFixed(2)}~${(historicalMax / BValue).toFixed(2)}倍）</strong> 中间位置。</p></li>
+</ul>
+
+</div>
+</div>
+
+    </div>
+</div>
+    `;
+
+        }
+
+
+        // 初始化时自动执行计算
+        window.addEventListener('load', calculate);
+    </script>
+
+</body>
+
+</html>
