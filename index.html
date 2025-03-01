@@ -45,9 +45,9 @@
             padding: 15px 30px;
             border: none;
             display: block;
-            width: 100%;
             margin-top: 20px;
-            cursor: pointer
+            cursor: pointer;
+            flex:1;
         }
         .btn1{
             background-color: #b873e8;
@@ -107,47 +107,47 @@
         <form id="valuation-form">
             <div class="item">
                 <label for="stock-name" style="display: block; margin-bottom: 10px">股票名称：</label>
-                <input type="text" id="stock-name" value="公牛集团" style="width: 100%">
+                <input type="text" id="stock-name"   placeholder="请输入">
             </div>
             <div class="item">
                 <label for="roe" style="display: block; margin-bottom: 10px">ROE（%）：</label>
-                <input type="number" id="roe" value="30" style="width: 100%">
+                <input type="number" id="roe"   placeholder="请输入">
             </div>
     
             <div class="item">
                 <label for="eps" style="display: block; margin-bottom: 10px">EPS（元）：</label>
-                <input type="number" id="eps" value="3.37" style="width: 100%">
+                <input type="number" id="eps"    placeholder="请输入">
             </div>
             <div class="item">
                 <label for="treasury-rate" style="display: block; margin-bottom: 10px">国债利率（%）：</label>
-                <input type="number" id="treasury-rate" value="3" placeholder="请输入" />
+                <input type="number" id="treasury-rate"  placeholder="请输入" />
             </div>
     
             <div class="item">
                 <label for="historical-min" style="display: block; margin-bottom: 10px">历史最低价：</label>
-                <input type="number" id="historical-min" value="52" placeholder="请输入" />
+                <input type="number" id="historical-min"  placeholder="请输入" />
             </div>
     
     
             <div class="item">
                 <label for="historical-max" style="display: block; margin-bottom: 10px">历史最高价：</label>
-                <input type="number" id="historical-max" value="112" placeholder="请输入" />
+                <input type="number" id="historical-max"  placeholder="请输入" />
             </div>
     
             <div class="item">
                 <label for="current-pb" style="display: block; margin-bottom: 10px">当前PB：</label>
-                <input type="number" id="current-pb" value="6.53" placeholder="请输入" />
+                <input type="number" id="current-pb"   placeholder="请输入" />
             </div>
     
     
             <div class="item">
                 <label for="stockValue" style="display: block; margin-bottom: 10px">当前股价：</label>
-                <input type="number" id="stockValue" value="74.98" placeholder="请输入" />
+                <input type="number" id="stockValue"   placeholder="请输入" />
             </div>
     
             <div class="item">
                 <button type="button" class="btn btn1" onclick="reset()">清空</button>
-                <button type="button" class="btn" onclick="calculate()">计算</button>
+                <button type="button" class="btn" onclick="calculate(this)">计算</button>
             </div>
            
         </form>
@@ -164,19 +164,29 @@
     </div>
 
     <script>
-        function reset() {
-            document.getElementById('stock-name').value = '';
-            document.getElementById('roe').value = '';
-            document.getElementById('eps').value = '';
-            // document.getElementById('treasury-rate').value = '';
-            document.getElementById('historical-min').value = '';
-            document.getElementById('historical-max').value = '';
-            document.getElementById('current-pb').value = '';
-            document.getElementById('stockValue').value = '';
-
+       function reset(value={}) {
+            document.getElementById('stock-name').value = value.name || '';
+            document.getElementById('roe').value = value.roe || '';
+            document.getElementById('eps').value = value.eps || '';
+            document.getElementById('treasury-rate').value = value.rate || '';
+            document.getElementById('historical-min').value = value.min || '';
+            document.getElementById('historical-max').value = value.max || '';
+            document.getElementById('current-pb').value = value.pb || '';
+            document.getElementById('stockValue').value = value.va || '';
         }
+
         // 计算函数
         function calculate() {
+            reset({
+                name:'公牛集团',
+                roe:30,
+                eps:3.37,
+                rate: 3,
+                min:52,
+                max:112,
+                pb: 6.53,
+                va: 74.98
+            })
             // 获取输入并转为数值
             const roe = parseFloat(document.getElementById('roe').value) / 100 || 0;
             const eps = parseFloat(document.getElementById('eps').value) || 0;
@@ -374,6 +384,7 @@
     `;
 
         }
+
 
         // 初始化时自动执行计算
         window.addEventListener('load', calculate);
