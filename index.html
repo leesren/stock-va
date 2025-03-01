@@ -49,9 +49,16 @@
             margin-top: 20px;
             cursor: pointer
         }
+        .btn1{
+            background-color: #b873e8;
+        }
+        
 
         .btn:hover {
             background-color: #3498db
+        }
+        .btn1:hover {
+            background-color: #d24fe6
         }
 
         .red-border {
@@ -138,8 +145,11 @@
                 <input type="number" id="stockValue" value="74.98" placeholder="请输入" />
             </div>
     
-    
-            <button type="button" class="btn" onclick="calculate()">计算</button>
+            <div class="item">
+                <button type="button" class="btn btn1" onclick="reset()">清空</button>
+                <button type="button" class="btn" onclick="calculate()">计算</button>
+            </div>
+           
         </form>
     
         <table id="results" style="margin-top: 20px">
@@ -154,6 +164,17 @@
     </div>
 
     <script>
+        function reset() {
+            document.getElementById('stock-name').value = '';
+            document.getElementById('roe').value = '';
+            document.getElementById('eps').value = '';
+            // document.getElementById('treasury-rate').value = '';
+            document.getElementById('historical-min').value = '';
+            document.getElementById('historical-max').value = '';
+            document.getElementById('current-pb').value = '';
+            document.getElementById('stockValue').value = '';
+
+        }
         // 计算函数
         function calculate() {
             // 获取输入并转为数值
