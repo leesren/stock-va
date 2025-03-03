@@ -215,7 +215,7 @@
             const ror = (currentVPb / BValue).toFixed(2);
             const addRate = (roe * 100 / currentVPb).toFixed(2);
             const latestRate = (addRate - treasuryRate * 100).toFixed(2);
-            const bondRate = (roe*100 / 100 * currentPb).toFixed(2) * 1;
+            const bondRate = (roeVa / currentPb).toFixed(2) * 1;
             // 显示分析结论
             document.getElementById('analysis').innerHTML = `
         <div id="preview-contents" class="note-content" style="padding-left: 35px; padding-right: 35px; padding-bottom: 115px;">
@@ -301,7 +301,7 @@
  <ul>
 <li><p>本金投入：${100 * currentPb}元</p></li>
 <li><p>年收益：${roe*100}元（ROE×净资产=${roeVa}%×100元）</p></li>
-<li><p>预期收益率：${roe*100} 元 / ${100 * currentPb}元 ≈ ${  bondRate }%（ROE/PB）</p></li>
+<li><p>预期收益率：${roeVa} 元 / ${100 * currentPb}元 ≈ ${  bondRate }%（ROE/PB）</p></li>
 
 <li><p>这就类似于用${100 * currentPb}元购买了一份面值100元、年利率${roeVa}%的债券，虽然本金溢价${  ( 100 * currentPb - 100).toFixed(0) }%，但预期收益率（${ bondRate }%）仍${ bondRate - treasuryRate*100 > 0 ?'高于':'低于'  }当前的无风险收益率（${treasuryRate * 100}%）</p></li>
  
