@@ -185,6 +185,7 @@
             })
             // 获取输入并转为数值
             const roe = (parseFloat(document.getElementById('roe').value) / 100 || 0).toFixed(2);
+            const roeVa = roe * 100;
             const eps = parseFloat(document.getElementById('eps').value) || 0;
             const treasuryRate = (parseFloat(document.getElementById('treasury-rate').value) / 100 || 0).toFixed(2);
             const historicalMin = parseFloat(document.getElementById('historical-min').value);
@@ -294,10 +295,10 @@
 假设【${stockName}】的每股净资产为100元，ROE 稳定在 ${roe*100}% 左右，意味着每年能为股东创造 ${100 * roe} 元的净利润。此时若以 ${currentPb} 倍 PB 买入，相当于：
  <ul>
 <li><p>本金投入：${100 * currentPb}元</p></li>
-<li><p>年收益：${roe*100}元（ROE×净资产=${roe}%×100元）</p></li>
+<li><p>年收益：${roe*100}元（ROE×净资产=${roeVa}%×100元）</p></li>
 <li><p>预期收益率：${roe*100} 元 / ${100 * currentPb}元 ≈ ${  bondRate }%（ROE/PB）</p></li>
 
-<li><p>这就类似于用${100 * currentPb}元购买了一份面值100元、年利率${roe*100}%的债券，虽然本金溢价${  (((100 * currentPb - 100) /100)*100).toFixed(0) }%，但预期收益率（${ bondRate }%）仍${ bondRate - treasuryRate*100 > 0 ?'高于':'低于'  }当前的无风险收益率（${treasuryRate * 100}%）</p></li>
+<li><p>这就类似于用${100 * currentPb}元购买了一份面值100元、年利率${roeVa}%的债券，虽然本金溢价${  ( 100 * currentPb - 100).toFixed(0) }%，但预期收益率（${ bondRate }%）仍${ bondRate - treasuryRate*100 > 0 ?'高于':'低于'  }当前的无风险收益率（${treasuryRate * 100}%）</p></li>
  
 </ul>
 </div>
