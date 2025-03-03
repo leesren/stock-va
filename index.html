@@ -152,11 +152,7 @@
            
         </form>
     
-        <table id="results" style="margin-top: 20px">
-            <tr>
-                <th colspan="4" style="text-align: left; background-color: #f5f5f5">计算结果（按股价区间升序排列）</th>
-            </tr>
-        </table>
+        
     
         <div id="analysis"
             style="margin-top: 20px; padding: 15px; background-color: white; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1)">
@@ -227,70 +223,7 @@
                     factor: 3.5
                 }
             ];
-
-            // 计算所有风险类型的结果并排序
-            let results = [];
-            for (const config of riskConfigs) {
-                const minRor = treasuryRate + config.maxPrem;
-                const maxRor = treasuryRate + config.minPrem;
-                let pbMin = roe / maxRor;  // 改为 let
-                let pbMax = roe / minRor;  // 改为 let
-                let priceMin = b * pbMin;
-                let priceMax = b * pbMax;
-                if (priceMin > priceMax) {
-                    [priceMin, priceMax] = [priceMax, priceMin];
-                    [pbMin, pbMax] = [pbMax, pbMin]; // 需要同时修改pbMin/pbMax
-                }
-                results.push({
-                    type: config.name,
-                    premRange: `${config.minPrem * 100}~${config.maxPrem * 100}`,
-                    pbRange: `${pbMin.toFixed(2)}~${pbMax.toFixed(2)}`,
-                    priceRange: `${priceMin.toFixed(2)}~${priceMax.toFixed(2)}`,
-                    active: currentPb >= pbMin.toFixed(2) && currentPb < pbMax.toFixed(2),
-                });
-            }
-
-            // 按股价区间升序排列
-            results.sort((a, b) => {
-                const aMax = parseFloat(a.priceRange.split('~')[1]);
-                const bMax = parseFloat(b.priceRange.split('~')[1]);
-                return aMax - bMax;
-            });
-
-            // 清空表格并填充数据
-            document.getElementById('results').innerHTML = `
-        <tr><th>风险类型</th><th>风险溢价范围</th><th>PB区间</th><th>股价区间（元）</th></tr>
-    `;
-            results.forEach(result => {
-                document.getElementById('results').innerHTML += `
-            <tr class="${result.active ? 'active' : ''}">
-                <td>${result.type}</td>
-                <td>${result.premRange.replace('%', '')}</td>
-                <td>${result.pbRange}</td>
-                <td>${result.priceRange}</td>
-            </tr>
-        `;
-            });
-
-            // 分析历史股价区间
-            let analysisText = ['B = EPS / ROE； 股价 = B * PB；股价 = EPS / ROE * PB；'];
-            analysisText.push('PB​ = ROE / (国债利率 + 风险溢价)')
-            if (historicalMin < results[0].priceRange.split('~')[1]) {
-                analysisText.push(`历史最低价低于理论下限`);
-            } else if (historicalMin > results[0].priceRange.split('~')[1] && historicalMin < results[0].priceRange.split('~')[0]) {
-                analysisText.push(`历史最低价在理论区间内`);
-            } else {
-                analysisText.push(`历史最低价高于理论下限`);
-            }
-
-            if (historicalMax > results[0].priceRange.split('~')[0]) {
-                analysisText.push(`历史最高价高于理论上限`);
-            } else if (historicalMax > results[0].priceRange.split('~')[1] && historicalMax < results[0].priceRange.split('~')[0]) {
-                analysisText.push(`历史最高价在理论区间内`);
-            } else {
-                analysisText.push(`历史最高价低于理论上限`);
-            }
-
+ 
             const BValue = (eps / roe).toFixed(2) * 1;
             const currentVPb = (stockValue / BValue).toFixed(2) * 1;
             const ror = (currentVPb / BValue).toFixed(2);
@@ -299,7 +232,7 @@
             const bondRate = (roe*100 / 100 * currentPb).toFixed(2) * 1;
             // 显示分析结论
             document.getElementById('analysis').innerHTML = `
-        <div id="preview-contents" class="note-content" style="padding-left: 35px; padding-right: 35px; padding-bottom: 615px;">
+        <div id="preview-contents" class="note-content" style="padding-left: 35px; padding-right: 35px; padding-bottom: 115px;">
 
     <div id="wmd-preview-section-25" class="wmd-preview-section preview-content">
 
