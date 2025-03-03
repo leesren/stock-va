@@ -295,7 +295,8 @@
             const currentVPb = (stockValue / BValue).toFixed(2) * 1;
             const ror = (currentVPb / BValue).toFixed(2);
             const addRate = (roe * 100 / currentVPb).toFixed(2);
-            const latestRate = (addRate - treasuryRate * 100).toFixed(2)
+            const latestRate = (addRate - treasuryRate * 100).toFixed(2);
+            const bondRate = (roe*100 / 100 * currentPb).toFixed(2) * 1;
             // 显示分析结论
             document.getElementById('analysis').innerHTML = `
         <div id="preview-contents" class="note-content" style="padding-left: 35px; padding-right: 35px; padding-bottom: 615px;">
@@ -375,7 +376,18 @@
 <ul>
 <li><p><strong>PB=${currentPb}倍</strong> 也处于 <strong>市场历史区间（${(historicalMin / BValue).toFixed(2)}~${(historicalMax / BValue).toFixed(2)}倍）</strong> 中间位置。</p></li>
 </ul>
+<h4 id="1-当前溢价合理性"><strong>(2) 债券类比</strong></h4>
+<div>
+假设【${stockName}】的每股净资产为100元，ROE 稳定在 ${roe*100}% 左右，意味着每年能为股东创造 ${100 * roe} 元的净利润。此时若以 ${currentPb} 倍 PB 买入，相当于：
+ <ul>
+<li><p>本金投入：${100 * currentPb}元</p></li>
+<li><p>年收益：${roe*100}元（ROE×净资产=${roe}%×100元）</p></li>
+<li><p>预期收益率：${roe*100} 元 / ${100 * currentPb}元 ≈ ${  bondRate }%（ROE/PB）</p></li>
 
+<li><p>这就类似于用${100 * currentPb}元购买了一份面值100元、年利率${roe*100}%的债券，虽然本金溢价${ 100*((100 * currentPb - 100) /100).toFixed(2) }%，但预期收益率（${ bondRate }%）仍${ bondRate - treasuryRate*100 > 0 ?'高于':'低于'  }当前的无风险收益率（${treasuryRate * 100}%）</p></li>
+ 
+</ul>
+</div>
 </div>
 </div>
 
