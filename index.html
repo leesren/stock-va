@@ -190,12 +190,12 @@
             })
             // 获取输入并转为数值
             const roe = (parseFloat(document.getElementById('roe').value) / 100 || 0).toFixed(2);
-            const roeVa = roe * 100;
+            const roeVa = (roe * 100).toFixed(2);
             const eps = parseFloat(document.getElementById('eps').value) || 0;
             const treasuryRate = (parseFloat(document.getElementById('treasury-rate').value) / 100 || 0).toFixed(2);
             const historicalMin = parseFloat(document.getElementById('historical-min').value);
             const historicalMax = parseFloat(document.getElementById('historical-max').value);
-            const currentPbInput = document.getElementById('current-pb');
+            const currentPbInput = document.getElementById('current-pb') || 0;
             const stockName = document.getElementById('stock-name').value
             const stockValue = parseFloat(document.getElementById('stockValue').value || 0) || 0;
             const currentPb = parseFloat(currentPbInput.value || 0);
@@ -211,107 +211,127 @@
             
  
             const BValue = (eps / roe).toFixed(2) * 1;
-            const currentVPb = (stockValue / BValue).toFixed(2) * 1;
+            const currentVPb = (stockValue / BValue).toFixed(2)*1;
+            const currentVPb_Min = (historicalMin / BValue);
+            const currentVPb_Max = (historicalMax / BValue);
             const ror = (currentVPb / BValue).toFixed(2);
-            const addRate = (roe * 100 / currentVPb).toFixed(2);
+            const addRate = (roeVa / currentVPb).toFixed(2);
             const latestRate = (addRate - treasuryRate * 100).toFixed(2);
             const bondRate = (roeVa / currentPb).toFixed(2) * 1;
+            const dd = (stockValue / BValue).toFixed(2)
             // 显示分析结论
             document.getElementById('analysis').innerHTML = `
-        <div id="preview-contents" class="note-content" style="padding-left: 35px; padding-right: 35px; padding-bottom: 115px;">
+        
+<div style="padding-left: 35px; padding-right: 35px; padding-bottom: 115px;">
+  <div>
+    <h3><strong>1. 核心公式</strong></h3>
 
-    <div id="wmd-preview-section-25" class="wmd-preview-section preview-content">
+    <p> <br>
+      <b>股价 = PB * B <b /><br><br>
+        其中：
+    </p>
 
-        <h3 id="1-核心公式"><strong>1. 核心公式</strong></h3>
+    <ul>
+      <li>
+        <p><strong>PB</strong> = ROE / (国债利率 + 风险溢价) </p>
+      </li>
+      <li>
+        <p><strong>B</strong> = EPS / ROE（每股净资产）</p>
+      </li>
+    </ul>
 
-        <p> <br>
-             <b>股价 = PB * B <b/><br><br>
-            其中： </p>
+    <hr>
 
+  </div>
+  <div>
+
+    <h3><strong>2. 代入【${stockName}】数据</strong></h3>
+
+  </div>
+  <div class="note-content">
+    <div>
+      <hr>
+    </div>
+    <div>
+
+      <h4><strong>A. 计算每股净资产（B）</strong></h4>
+
+      <p><b>B = EPS / ROE </b>= ${eps} / ${roeVa}% = ${BValue} 元</p>
+
+      <hr>
+
+    </div>
+    <div>
+
+      <h4><strong>2. 计算当前PB</strong></h4>
+      <p><b>PB(min) = 股价(min) / B </b>= ${historicalMin} / ${BValue} = ${currentVPb_Min.toFixed(2)} 倍</p>
+      <p><b>PB(当前) = 股价(当前) / B </b>= ${stockValue} / ${BValue} = ${dd} 倍</p>
+      
+      <p><b>PB(max) = 股价(max) / B </b>= ${historicalMax} / ${BValue} = ${currentVPb_Max.toFixed(2)} 倍</p>
+
+      <hr>
+
+    </div>
+    <div>
+
+      <h4><strong>3. 计算隐含的投资回报率（ROR）</strong></h4>
+      <p><b>ROR(min) = ROE / PB </b>= ${roeVa}% / ${currentVPb_Min.toFixed(2)} = ${(roeVa/currentVPb_Min).toFixed(2)}%</p>
+      <p><b>ROR(当前) = ROE / PB </b>= ${roeVa}% / ${currentVPb} = ${addRate}%</p>
+      <p><b>ROR(max) = ROE / PB </b>= ${roeVa}% / ${currentVPb_Max.toFixed(2)} = ${(roeVa/currentVPb_Max).toFixed(2)}%</p>
+
+      <hr>
+
+    </div>
+    <div>
+
+      <h4><strong>4. 计算风险溢价</strong>(跟国债${treasuryRate * 100}%相比)</h4>
+
+      <p><b>风险溢价 = ROR - 国债利率 </b>= ${addRate}% - ${treasuryRate * 100}% = ${latestRate}%</p>
+    </div>
+    <div>
+
+      <h4><strong>5. 结论与建议</strong></h4>
+
+    </div>
+    <div>
+
+      <h4><strong>(1) 当前溢价合理性</strong></h4>
+
+      <ul>
+        <li>
+          <p><strong>PB=${currentPb}倍</strong> 也处于 <strong>市场历史区间（${(historicalMin /
+              BValue).toFixed(2)}~${(historicalMax / BValue).toFixed(2)}倍）</strong> 中间位置。</p>
+        </li>
+      </ul>
+      <h4><strong>(2) 债券类比</strong></h4>
+      <div>
+        假设【${stockName}】的每股净资产为100元，ROE 稳定在 ${roe*100}% 左右，意味着每年能为股东创造 ${100 * roe} 元的净利润。此时若以 ${currentPb} 倍 PB 买入，相当于：
         <ul>
-            <li>
-                <p><strong>PB</strong> = ROE / (国债利率 + 风险溢价) </p>
-            </li>
-            <li>
-                <p><strong>B</strong> = EPS / ROE（每股净资产）</p>
-            </li>
+          <li>
+            <p>本金投入：${100 * currentPb}元</p>
+          </li>
+          <li>
+            <p>年收益：${roe*100}元（ROE×净资产=${roeVa}%×100元）</p>
+          </li>
+          <li>
+            <p>预期收益率：${roeVa} 元 / ${100 * currentPb}元 ≈ ${ bondRate }%（ROE/PB）</p>
+          </li>
+
+          <li>
+            <p>这就类似于用${100 * currentPb}元购买了一份面值100元、年利率${roeVa}%的债券，虽然本金溢价${ ( 100 * currentPb - 100).toFixed(0)
+              }%，但预期收益率（${ bondRate }%）仍${ bondRate - treasuryRate*100 > 0 ?'高于':'低于' }当前的无风险收益率（${treasuryRate * 100}%）
+            </p>
+          </li>
+
         </ul>
-
-        <hr>
-
+      </div>
     </div>
-    <div id="wmd-preview-section-26" class="wmd-preview-section preview-content">
-
-        <h3 ><strong>2. 代入【${stockName}】数据</strong></h3>
-
-    </div>
-     <div id="preview-contents" class="note-content" style="">
-  <div id="wmd-preview" class="preview-content"></div>
-  <div id="wmd-preview-section-24" class="wmd-preview-section preview-content">
-    <hr>
   </div>
-  <div id="wmd-preview-section-25" class="wmd-preview-section preview-content">
 
-    <h4 id="1-计算每股净资产b"><strong>A. 计算每股净资产（B）</strong></h4>
-
-    <p><b>B = EPS / ROE </b>= ${eps} / ${roe * 100}% = ${BValue} 元</p>
-
-    <hr>
-
-  </div>
-  <div id="wmd-preview-section-26" class="wmd-preview-section preview-content">
-
-    <h4 id="2-计算当前pb"><strong>2. 计算当前PB</strong></h4>
-
-    <p><b>PB = 股价 / B </b>= ${stockValue} / ${BValue} = ${(stockValue / BValue).toFixed(2)} 倍</p>
-
-    <hr>
-
-  </div>
-  <div id="wmd-preview-section-27" class="wmd-preview-section preview-content">
-
-    <h4 id="3-计算隐含的投资回报率ror"><strong>3. 计算隐含的投资回报率（ROR）</strong></h4>
-
-    <p><b>ROR = ROE / PB </b>= ${roe * 100}% / ${currentVPb} = ${addRate}%</p>
-
-    <hr>
-
-  </div>
-  <div id="wmd-preview-section-68" class="wmd-preview-section preview-content">
-
-    <h4 id="4-计算风险溢价"><strong>4. 计算风险溢价</strong>(跟国债${treasuryRate * 100}%相比)</h4>
-
-    <p><b>风险溢价 = ROR - 国债利率 </b>= ${addRate}% - ${treasuryRate * 100}% = ${latestRate}%</p>
-  </div>
-<div id="wmd-preview-section-75" class="wmd-preview-section preview-content">
-
-<h4 id="5-结论与建议"><strong>5. 结论与建议</strong></h4>
-
-</div>
-<div id="wmd-preview-section-76" class="wmd-preview-section preview-content">
-
-<h4 id="1-当前溢价合理性"><strong>(1) 当前溢价合理性</strong></h4>
-
-<ul>
-<li><p><strong>PB=${currentPb}倍</strong> 也处于 <strong>市场历史区间（${(historicalMin / BValue).toFixed(2)}~${(historicalMax / BValue).toFixed(2)}倍）</strong> 中间位置。</p></li>
-</ul>
-<h4 id="1-当前溢价合理性"><strong>(2) 债券类比</strong></h4>
-<div>
-假设【${stockName}】的每股净资产为100元，ROE 稳定在 ${roe*100}% 左右，意味着每年能为股东创造 ${100 * roe} 元的净利润。此时若以 ${currentPb} 倍 PB 买入，相当于：
- <ul>
-<li><p>本金投入：${100 * currentPb}元</p></li>
-<li><p>年收益：${roe*100}元（ROE×净资产=${roeVa}%×100元）</p></li>
-<li><p>预期收益率：${roeVa} 元 / ${100 * currentPb}元 ≈ ${  bondRate }%（ROE/PB）</p></li>
-
-<li><p>这就类似于用${100 * currentPb}元购买了一份面值100元、年利率${roeVa}%的债券，虽然本金溢价${  ( 100 * currentPb - 100).toFixed(0) }%，但预期收益率（${ bondRate }%）仍${ bondRate - treasuryRate*100 > 0 ?'高于':'低于'  }当前的无风险收益率（${treasuryRate * 100}%）</p></li>
- 
-</ul>
-</div>
 </div>
 </div>
 
-    </div>
-</div>
+
     `;
 
         }
