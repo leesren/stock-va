@@ -176,8 +176,8 @@
         }
 
         // 计算函数
-        function calculate() {
-            reset({
+        function calculate(evt) {
+           !evt && reset({
                 name:'公牛集团',
                 roe:30,
                 eps:3.37,
@@ -387,7 +387,9 @@
 
 
         // 初始化时自动执行计算
-        window.addEventListener('load', calculate);
+        window.addEventListener('load', ()=>{
+            calculate()
+        });
     </script>
 
 </body>
