@@ -146,6 +146,8 @@
     .star #toggle:checked~#expand {
       min-height: 250px;
       height: 350px;
+      overflow-y: auto; 
+      padding-right: 12px;
     }
 
     .star #toggle:checked~label::before {
@@ -227,7 +229,7 @@
 
 
         <div id="expand">
-
+            <div id="exBox"></div>
         </div>
       </section>
     </div>
@@ -253,7 +255,7 @@
         ${ls.map(e => {
         return `<li data-name="${e.name}" >
           <div style="display:flex; justify-content:space-between;padding:5px 0">
-          <div style=" flex: 1; color: #3f3ff9; text-decoration: underline;" onClick="initCache('${e.name}')">${e.name}</div>
+          <div style=" flex: 1; " onClick="initCache('${e.name}')"><span style="color: #3f3ff9; text-decoration: underline;">${e.name}</span>&nbsp;<span style="color:#555">ROE:${e.roe}%&nbsp;<span>PB:${e.pb}</span></span></div>
           <button onClick="delLs('${e.name}')">删除</button>
           </div>
 
@@ -262,7 +264,7 @@
           
         </ul>
       `
-      document.getElementById('expand').innerHTML = html;
+      document.getElementById('exBox').innerHTML = html;
     }
     function delLs(name) {
       const hasListStr = localStorage.getItem(CalculateLsKey);
@@ -351,7 +353,9 @@
       const addRate = (roeVa / currentVPb).toFixed(2);
       const latestRate = (addRate - treasuryRate * 100).toFixed(2);
       const bondRate = (roeVa / currentPb).toFixed(2) * 1;
-      const dd = (stockValue / BValue).toFixed(2)
+      const dd = (stockValue / BValue).toFixed(2);
+      const twoTimeRate = 2 * treasuryRate*100;
+      const twoTimeRatePb = (roeVa/(twoTimeRate)).toFixed(2);
       // 显示分析结论
       document.getElementById('analysis').innerHTML = `
         
@@ -454,6 +458,10 @@
             <p>这就类似于用${100 * currentPb}元购买了一份面值100元、年利率${roeVa}%的债券，虽然本金溢价${(100 * currentPb - 100).toFixed(0)
         }%，但预期收益率（${bondRate}%）仍${bondRate - treasuryRate * 100 > 0 ? '高于' : '低于'}当前的无风险收益率（${treasuryRate * 100}%）
             </p>
+          </li>
+          <li>
+            <p>如果预期收益率：2倍${treasuryRate*100}%=${twoTimeRate}%,需要PB，${roeVa}/${twoTimeRate}% ≈ ${ roeVa/(twoTimeRate)*100} ≈ ${twoTimeRatePb}PB，
+          <br/>即： 股价 = PB * B = ${twoTimeRatePb} * ${BValue} = ${ (twoTimeRatePb * BValue).toFixed(2)}</p>
           </li>
 
         </ul>
