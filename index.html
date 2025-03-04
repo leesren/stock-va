@@ -153,6 +153,9 @@
     .star #toggle:checked~label::before {
       content: "-";
     }
+    .activec{
+      color: #b75f00;
+    }
   </style>
 </head>
 
@@ -406,7 +409,7 @@
 
       <h4><strong>2. 计算当前PB</strong></h4>
       <p><b>PB(min) = 股价(min) / B </b><br/>= ${historicalMin} / ${BValue} = ${currentVPb_Min.toFixed(2)} 倍</p>
-      <p><b>PB(当前) = 股价(当前) / B </b><br/>= ${stockValue} / ${BValue} = ${dd} 倍</p>
+      <p class="activec"><b>PB(当前) = 股价(当前) / B </b><br/>= ${stockValue} / ${BValue} = ${dd} 倍</p>
       
       <p><b>PB(max) = 股价(max) / B </b><br/>= ${historicalMax} / ${BValue} = ${currentVPb_Max.toFixed(2)} 倍</p>
 
@@ -417,7 +420,7 @@
 
       <h4><strong>3. 计算隐含的投资回报率（ROR）</strong></h4>
       <p><b>ROR(min) = ROE / PB </b><br/>= ${roeVa}% / ${currentVPb_Min.toFixed(2)} = ${(roeVa / currentVPb_Min).toFixed(2)}%</p>
-      <p><b>ROR(当前) = ROE / PB </b><br/>= ${roeVa}% / ${currentVPb} = ${addRate}%</p>
+      <p class="activec"><b>ROR(当前) = ROE / PB </b><br/>= ${roeVa}% / ${currentVPb} = ${addRate}%</p>
       <p><b>ROR(max) = ROE / PB </b><br/>= ${roeVa}% / ${currentVPb_Max.toFixed(2)} = ${(roeVa / currentVPb_Max).toFixed(2)}%</p>
 
       <hr>
@@ -456,7 +459,7 @@
             </p>
           </li>
           <li>
-            <p>如果预期收益率：2倍${treasuryRate*100}%=${twoTimeRate}%,需要PB，${roeVa}/${twoTimeRate}% ≈ ${ roeVa/(twoTimeRate)*100} ≈ ${twoTimeRatePb}PB，
+            <p class="activec">如果预期收益率：2倍${treasuryRate*100}%=${twoTimeRate}%,需要PB，${roeVa}/${twoTimeRate}% ≈ ${ roeVa/(twoTimeRate)*100} ≈ ${twoTimeRatePb}PB，
           <br/>即： 股价 = PB * B = ${twoTimeRatePb} * ${BValue} = ${ (twoTimeRatePb * BValue).toFixed(2)}</p>
           </li>
 
