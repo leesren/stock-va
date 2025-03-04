@@ -253,7 +253,7 @@
         ${ls.map(e => {
         return `<li data-name="${e.name}" >
           <div style="display:flex; justify-content:space-between;padding:5px 0">
-          <span>${e.name}</span>
+          <div style=" flex: 1; color: #3f3ff9; text-decoration: underline;" onClick="initCache('${e.name}')">${e.name}</div>
           <button onClick="delLs('${e.name}')">删除</button>
           </div>
 
@@ -273,6 +273,12 @@
       }
       localStorage.setItem(CalculateLsKey, JSON.stringify(ls));
       starLs();
+    }
+    function initCache(sname){
+        const hasListStr = localStorage.getItem(CalculateLsKey);
+      const ls = hasListStr ? JSON.parse(hasListStr) : [];
+      const item = ls.find((item) => item.name === sname);
+    item &&  reset(item)
     }
     function save() {
       const res = {
