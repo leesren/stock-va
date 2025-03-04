@@ -275,10 +275,16 @@
       starLs();
     }
     function initCache(sname){
-        const hasListStr = localStorage.getItem(CalculateLsKey);
+       const hasListStr = localStorage.getItem(CalculateLsKey);
       const ls = hasListStr ? JSON.parse(hasListStr) : [];
       const item = ls.find((item) => item.name === sname);
-    item &&  reset(item)
+      console.log(item)
+      item &&  reset(item);
+    
+      
+      window.scrollTo({ top: 0,
+      left: 0,
+      behavior: 'smooth',})
     }
     function save() {
       const res = {
