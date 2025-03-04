@@ -286,7 +286,11 @@
       
       window.scrollTo({ top: 0,
       left: 0,
-      behavior: 'smooth',})
+      behavior: 'smooth',});
+      setTimeout(()=>{
+        calculate();
+        console.log('cal')
+      },500)
     }
     function save() {
       const res = {
@@ -401,10 +405,10 @@
     <div>
 
       <h4><strong>2. 计算当前PB</strong></h4>
-      <p><b>PB(min) = 股价(min) / B </b>= ${historicalMin} / ${BValue} = ${currentVPb_Min.toFixed(2)} 倍</p>
-      <p><b>PB(当前) = 股价(当前) / B </b>= ${stockValue} / ${BValue} = ${dd} 倍</p>
+      <p><b>PB(min) = 股价(min) / B </b><br/>= ${historicalMin} / ${BValue} = ${currentVPb_Min.toFixed(2)} 倍</p>
+      <p><b>PB(当前) = 股价(当前) / B </b><br/>= ${stockValue} / ${BValue} = ${dd} 倍</p>
       
-      <p><b>PB(max) = 股价(max) / B </b>= ${historicalMax} / ${BValue} = ${currentVPb_Max.toFixed(2)} 倍</p>
+      <p><b>PB(max) = 股价(max) / B </b><br/>= ${historicalMax} / ${BValue} = ${currentVPb_Max.toFixed(2)} 倍</p>
 
       <hr>
 
@@ -412,9 +416,9 @@
     <div>
 
       <h4><strong>3. 计算隐含的投资回报率（ROR）</strong></h4>
-      <p><b>ROR(min) = ROE / PB </b>= ${roeVa}% / ${currentVPb_Min.toFixed(2)} = ${(roeVa / currentVPb_Min).toFixed(2)}%</p>
-      <p><b>ROR(当前) = ROE / PB </b>= ${roeVa}% / ${currentVPb} = ${addRate}%</p>
-      <p><b>ROR(max) = ROE / PB </b>= ${roeVa}% / ${currentVPb_Max.toFixed(2)} = ${(roeVa / currentVPb_Max).toFixed(2)}%</p>
+      <p><b>ROR(min) = ROE / PB </b><br/>= ${roeVa}% / ${currentVPb_Min.toFixed(2)} = ${(roeVa / currentVPb_Min).toFixed(2)}%</p>
+      <p><b>ROR(当前) = ROE / PB </b><br/>= ${roeVa}% / ${currentVPb} = ${addRate}%</p>
+      <p><b>ROR(max) = ROE / PB </b><br/>= ${roeVa}% / ${currentVPb_Max.toFixed(2)} = ${(roeVa / currentVPb_Max).toFixed(2)}%</p>
 
       <hr>
 
@@ -431,16 +435,8 @@
 
     </div>
     <div>
-
-      <h4><strong>(1) 当前溢价合理性</strong></h4>
-
-      <ul>
-        <li>
-          <p><strong>PB=${currentPb}倍</strong> 也处于 <strong>市场历史区间（${(historicalMin /
-          BValue).toFixed(2)}~${(historicalMax / BValue).toFixed(2)}倍）</strong> 中间位置。</p>
-        </li>
-      </ul>
-      <h4><strong>(2) 债券类比</strong></h4>
+ 
+      <h4><strong>(1) 债券类比</strong></h4>
       <div>
         假设【${stockName}】的每股净资产为100元，ROE 稳定在 ${roe * 100}% 左右，意味着每年能为股东创造 ${100 * roe} 元的净利润。此时若以 ${currentPb} 倍 PB 买入，相当于：
         <ul>
