@@ -260,10 +260,10 @@
       const ls = hasListStr ? JSON.parse(hasListStr) : [];
       const html = `
        <ul>
-        ${ls.map(e => {
+        ${calc(ls).map(e => {
         return `<li data-name="${e.name}" >
           <div style="display:flex; justify-content:space-between;padding:5px 0">
-          <div style=" flex: 1; " onClick="initCache('${e.name}')"><span style="color: #3f3ff9; text-decoration: underline;">${e.name}</span>&nbsp;<span style="color:#555">ROE:${e.roe}%&nbsp;<span>PB:${e.pb}</span></span></div>
+          <div style=" flex: 1; " onClick="initCache('${e.name}')"><span style="color: #3f3ff9; text-decoration: underline;">${e.name}</span>&nbsp;<span style="color:#555">RORttm:${e.rorNow}%&nbsp;<span>ror:${e.ror}%</span></span></div>
           <button onClick="delLs('${e.name}')">删除</button>
           </div>
 
@@ -496,6 +496,19 @@
 
     }
 
+const foo2 = (v, len = 2) => {
+  return Number(v).toFixed(len);
+};
+const calc = (ls ) => {
+  return ls.map((el, idx) => {
+    return {
+      ...el,
+      index: idx + 1,
+      rorNow: foo2(el.roe / (el.va / ((el.eps / el.roe) * 100)), 2),
+      ror: foo2(el.roe / el.pb, 2),
+    };
+  });
+};
 
     // 初始化时自动执行计算
     window.addEventListener('load', () => {
