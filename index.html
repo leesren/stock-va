@@ -300,7 +300,7 @@
       const hasListStr = localStorage.getItem(CalculateLsKey);
       const ls = hasListStr ? JSON.parse(hasListStr) : $list;
       const html = `
-       <ul>
+       <ul style="padding-left:16px;">
         ${calc(ls).map(e => {
         let c = '';
           if(e.rorNow >= 5){
@@ -312,7 +312,7 @@
           <div style="display:flex; justify-content:space-between;padding:5px 0">
           <div style=" flex: 1; " onClick="initCache('${e.name}')">
             <span style="color: #3f3ff9; text-decoration: underline; font-size:13px;">${e.name}</span>&nbsp;
-            <div style="margin-top:2px;color:#555">
+            <div style="margin-top:2px;color:#555;font-size:12px">
                 <span>rorTTM <span  style="color:${c}">${e.rorNow}%</span>&nbsp；<span>ror ${e.ror}%</span></span>
             </div>
             
