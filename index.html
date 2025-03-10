@@ -256,7 +256,7 @@
   <script>
      const CalculateLsKey = 'stock-preference'
     function initOriginData(){
-      localStorage.setItem(CalculateLsKey,JSON.parse($list ));
+      localStorage.setItem(CalculateLsKey,JSON.stringify($list ));
     }
     function reset(value = {}) {
       document.getElementById('stock-name').value = value.name || '';
