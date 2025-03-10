@@ -276,10 +276,25 @@
       const html = `
        <ul>
         ${calc(ls).map(e => {
+        let c = '';
+          if(e.rorNow >= 5){
+            c = 'orang'
+          }else if(e.rorNow > 3 && e.rorNow <5){
+            c= 'red'
+          }
         return `<li data-name="${e.name}" >
           <div style="display:flex; justify-content:space-between;padding:5px 0">
-          <div style=" flex: 1; " onClick="initCache('${e.name}')"><span style="color: #3f3ff9; text-decoration: underline;">${e.name}</span>&nbsp;<span style="color:#555">RORttm:${e.rorNow}%&nbsp;<span>ror:${e.ror}%</span></span></div>
-          <button onClick="delLs('${e.name}')">删除</button>
+          <div style=" flex: 1; " onClick="initCache('${e.name}')">
+            <span style="color: #3f3ff9; text-decoration: underline;">${e.name}</span>&nbsp;
+            <div style="margin-top:4px;color:#555">
+                <span>rorTTM <span  style="color:${c}">${e.rorNow}%</span>&nbsp；<span>ror ${e.ror}%</span></span>
+            </div>
+            
+        </div>
+         <div style="min-width:70px">
+ <button onClick="copyName('${e.name}')">复制</button>
+     <button onClick="delLs('${e.name}')">删除</button>
+    </div>
           </div>
 
           </li>`
