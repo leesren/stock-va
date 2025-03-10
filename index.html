@@ -254,7 +254,33 @@
   
   </script>
   <script>
-     const CalculateLsKey = 'stock-preference'
+     const CalculateLsKey = 'stock-preference';
+    function nativeCopy(t){
+       var e = document.createElement('textarea');
+      e.value = t;
+      document.body.appendChild(e);
+      e.select();
+      e.setSelectionRange(0, 99999);
+      try {
+        var a = document.execCommand('copy');
+        if (a) {
+          console.log('使用原生 Clipboard API 复制成功');
+        } else {
+          console.log('使用原生 Clipboard API 复制失败');
+          //   this.showToast({
+          //     title: '复制失败，请手动复制',
+          //     icon: 'none',
+          //   });
+        }
+      } catch (n) {
+        console.error('使用原生 Clipboard API 复制时出错:', n);
+        // this.showToast({
+        //   title: '复制失败，请手动复制',
+        //   icon: 'none',
+        // });
+      }
+      document.body.removeChild(e);
+    }
     function initOriginData(){
       localStorage.setItem(CalculateLsKey,JSON.stringify($list ));
     }
@@ -285,14 +311,14 @@
         return `<li data-name="${e.name}" >
           <div style="display:flex; justify-content:space-between;padding:5px 0">
           <div style=" flex: 1; " onClick="initCache('${e.name}')">
-            <span style="color: #3f3ff9; text-decoration: underline;">${e.name}</span>&nbsp;
-            <div style="margin-top:4px;color:#555">
+            <span style="color: #3f3ff9; text-decoration: underline; font-size:13px;">${e.name}</span>&nbsp;
+            <div style="margin-top:2px;color:#555">
                 <span>rorTTM <span  style="color:${c}">${e.rorNow}%</span>&nbsp；<span>ror ${e.ror}%</span></span>
             </div>
             
         </div>
          <div style="min-width:70px">
- <button onClick="copyName('${e.name}')">复制</button>
+ <button onClick="nativeCopy('${e.name}')">复制</button> &nbsp;
      <button onClick="delLs('${e.name}')">删除</button>
     </div>
           </div>
