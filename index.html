@@ -234,6 +234,11 @@
 
     <div id="analysis"
       style="margin-top: 20px; padding: 15px; background-color: white; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1)">
+      
+       <div class="" style="margin-bottom:10px;display:flex; align-items:center"> 
+        <input id="kw" type="text" style="margin-bottom:0" id="kw" oninput="onChangeKw(this)" placeholder="请输入关键字">
+         <button class=" " onclick="clearKw()" style="margin-left:10px;min-width:70px;height:35px">清空</button>
+      </div>
       <section class="star">
 
         <input id="toggle" type="checkbox" checked>
@@ -260,6 +265,14 @@
   </script>
   <script>
      const CalculateLsKey = 'stock-preference';
+    function clearKw(){ 
+      document.getElementById('kw').value = '';
+      starLs()
+    }
+    function onChangeKw(evt){
+      console.log(evt.value)
+      starLs(evt.value)
+    }
     function nativeCopy(t){
        var e = document.createElement('textarea');
       e.value = t;
@@ -301,12 +314,18 @@
       document.getElementById('code').value = value.code || '';
     }
    
-    function starLs() {
+    function starLs(kw='') {
       const hasListStr = localStorage.getItem(CalculateLsKey);
       const ls = hasListStr ? JSON.parse(hasListStr) : $list;
       const html = `
        <ul style="padding-left:16px;">
-        ${calc(ls).map(e => {
+        ${calc(ls).filter(e=>{
+          if(kw){
+            return  (e.name + "").includes(kw) ||
+        (e.code + "").includes(kw)
+          }
+          return true
+        }).map(e => {
         let c = '';
           if(e.rorNow >= 5){
             c = 'red'
@@ -447,7 +466,7 @@
       // 显示分析结论
       document.getElementById('analysis').innerHTML = `
         
-<div style="padding-left: 20px; padding-right: 20px; padding-bottom: 25px;">
+<div style="padding-left: 20px; padding-right: 25px; padding-bottom: 25px;">
   <div>
     <h3><strong>1. 核心公式</strong></h3>
 
