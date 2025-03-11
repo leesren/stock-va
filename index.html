@@ -254,6 +254,7 @@
       style="margin-top: 20px; padding: 15px; background-color: white; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1)">
        <div class="item">
         <button type="button" class="btn btn1" onclick="initOriginData()">初始化</button> 
+         <button type="button" class="btn btn2" onclick="copyAll()">复制全部</button> 
       </div>
     </div>
 
@@ -298,6 +299,11 @@
         // });
       }
       document.body.removeChild(e);
+    }
+    function copyAll(){
+      const hasListStr = localStorage.getItem(CalculateLsKey);
+      console.log(hasListStr)
+      nativeCopy(hasListStr)
     }
     function initOriginData(){
       localStorage.setItem(CalculateLsKey,JSON.stringify($list ));
