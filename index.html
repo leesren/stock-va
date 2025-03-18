@@ -373,9 +373,9 @@
       const ls = hasListStr ? JSON.parse(hasListStr) : $list;
       const lasLs = calc(ls);
       if(direction == 'asc'){
-        lasLs.sort((a,b)=>  a.ror - b.ror)
+        lasLs.sort((a,b)=>  a.rorNow - b.rorNow)
       }else if(direction == 'desc'){
-        lasLs.sort((a,b)=>  b.ror - a.ror)
+        lasLs.sort((a,b)=>  b.rorNow - a.rorNow)
       }
       const html = `
        <ul style="padding-left:16px;">
